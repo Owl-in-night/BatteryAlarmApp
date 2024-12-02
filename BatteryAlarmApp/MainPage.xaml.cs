@@ -206,28 +206,25 @@ namespace BatteryAlarmApp
                     }
 
 
-                    ///Sonido
+                    ///Activar alarma Min y Max
                     // Comprobar si el nivel de batería coincide con el porcentaje mínimo y reproducir la alarma si es necesario
-                    bool isChargerConnected = batteryReport.Status == BatteryStatus.Charging || batteryReport.Status == BatteryStatus.Idle;
+                    var isChargerConnected = batteryReport.Status == BatteryStatus.Charging || batteryReport.Status == BatteryStatus.Idle;
 
-                    // Comprobar si el nivel de batería coincide con el porcentaje mínimo y reproducir la alarma si es necesario
-                    // Verificar si la clave existe y no es nula en localSettingsMin
+                    //Min
+                    // Alarma Mínima
                     if (localSettingsMin.Values.ContainsKey("MinBatteryPercentage") &&
                         localSettingsMin.Values["MinBatteryPercentage"] != null)
                     {
-                        // Convertir el valor a entero para compararlo
                         int minBatteryPercentage = (int)localSettingsMin.Values["MinBatteryPercentage"];
 
-                        // Comprobar si el nivel de batería coincide con el porcentaje mínimo
-                        if (remainingChargePercent == minBatteryPercentage)
+                        // Comprobar si el nivel de batería es menor o igual al porcentaje mínimo
+                        if (remainingChargePercent <= minBatteryPercentage)
                         {
-                            // Verificar que el checkbox esté inicializado y marcado
                             if (MinAlarmActiveCheckbox != null && MinAlarmActiveCheckbox.IsChecked == true)
                             {
-                                // Verificar si el reproductor está inicializado
                                 if (MinAlarmSoundPlayer != null)
                                 {
-                                    // Solo reproducir la alarma si el cargador no está conectado
+                                    // Solo reproducir si el cargador está desconectado (ajustar según necesidad)
                                     if (!isChargerConnected)
                                     {
                                         MinAlarmSoundPlayer.Play();
@@ -244,113 +241,28 @@ namespace BatteryAlarmApp
                             }
                             else
                             {
-                                Debug.WriteLine("MinAlarmActiveCheckbox no está inicializado o no está marcado.");
+                                Debug.WriteLine("MinAlarmActiveCheckbox no está marcado.");
                             }
                         }
                     }
                     else
                     {
-                        Debug.WriteLine("MinBatteryPercentage no está configurado en localSettingsMin.");
+                        Debug.WriteLine("MinBatteryPercentage no está configurado en localSettings.");
                     }
 
-
-                    // Comprobar si el nivel de batería coincide con el porcentaje mínimo y reproducir la alarma si es necesario
-                    if (localSettingsMin.Values.ContainsKey("MinBatteryPercentage") &&
-                        localSettingsMin.Values["MinBatteryPercentage"] != null)
-                    {
-                        if (remainingChargePercent == (int)localSettingsMin.Values["MinBatteryPercentage"])
-                        {
-                            if (MinAlarmActiveCheckbox != null && MinAlarmActiveCheckbox.IsChecked == true)
-                            {
-                                if (MinAlarmSoundPlayer != null)
-                                {
-                                    // Solo reproducir la alarma si el cargador no está conectado
-                                    if (!isChargerConnected)
-                                    {
-                                        MinAlarmSoundPlayer.Play();
-                                    }
-                                    else
-                                    {
-                                        MinAlarmSoundPlayer.Stop();
-                                    }
-                                }
-                                else
-                                {
-                                    Debug.WriteLine("MinAlarmSoundPlayer no está inicializado.");
-                                }
-                            }
-                            else
-                            {
-                                Debug.WriteLine("MinAlarmActiveCheckbox no está inicializado o no está marcado.");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Debug.WriteLine("MinBatteryPercentage no está configurado en localSettingsMin.");
-                    }
-
-                    ///
-                    // Verificar si la clave existe y no es nula en localSettingsMax
+                    // Alarma Máxima
                     if (localSettingsMax.Values.ContainsKey("MaxBatteryPercentage") &&
                         localSettingsMax.Values["MaxBatteryPercentage"] != null)
                     {
-                        // Convertir el valor a entero para compararlo
-                        int maxBatteryPercentage = (int)localSettingsMax.Values["MaxBatteryPercentage"];
-
-                        // Comprobar si el nivel de batería coincide con el porcentaje máximo
-                        if (remainingChargePercent == maxBatteryPercentage)
-                        {
-                            // Verificar que el checkbox esté inicializado y marcado
-                            if (MaxAlarmActiveCheckbox != null && MaxAlarmActiveCheckbox.IsChecked == true)
-                            {
-                                // Verificar si el reproductor está inicializado
-                                if (MaxAlarmSoundPlayer != null)
-                                {
-                                    // Solo reproducir la alarma si el cargador está conectado
-                                    if (isChargerConnected)
-                                    {
-                                        MaxAlarmSoundPlayer.Play();
-                                    }
-                                    else
-                                    {
-                                        MaxAlarmSoundPlayer.Stop();
-                                    }
-                                }
-                                else
-                                {
-                                    Debug.WriteLine("MaxAlarmSoundPlayer no está inicializado.");
-                                }
-                            }
-                            else
-                            {
-                                Debug.WriteLine("MaxAlarmActiveCheckbox no está inicializado o no está marcado.");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Debug.WriteLine("MaxBatteryPercentage no está configurado en localSettingsMax.");
-                    }
-
-                    //Max
-                    // Verificar si la clave "MaxBatteryPercentage" existe y no es nula en localSettingsMax
-                    if (localSettingsMax.Values.ContainsKey("MaxBatteryPercentage") &&
-                        localSettingsMax.Values["MaxBatteryPercentage"] != null)
-                    {
-                        // Convertir el valor a entero para la comparación
                         int maxBatteryPercentage = (int)localSettingsMax.Values["MaxBatteryPercentage"];
 
                         // Comprobar si el nivel de batería excede o es igual al porcentaje máximo permitido
                         if (remainingChargePercent >= maxBatteryPercentage)
                         {
-                            // Verificar que MaxAlarmActiveCheckbox esté inicializado y marcado
                             if (MaxAlarmActiveCheckbox != null && MaxAlarmActiveCheckbox.IsChecked == true)
                             {
-                                // Verificar que el reproductor de sonido esté inicializado
                                 if (MaxAlarmSoundPlayer != null)
                                 {
-                                    // Solo reproducir la alarma si el cargador está conectado
                                     if (isChargerConnected)
                                     {
                                         MaxAlarmSoundPlayer.Play();
@@ -367,14 +279,15 @@ namespace BatteryAlarmApp
                             }
                             else
                             {
-                                Debug.WriteLine("MaxAlarmActiveCheckbox no está inicializado o no está marcado.");
+                                Debug.WriteLine("MaxAlarmActiveCheckbox no está marcado.");
                             }
                         }
                     }
                     else
                     {
-                        Debug.WriteLine("MaxBatteryPercentage no está configurado en localSettingsMax.");
+                        Debug.WriteLine("MaxBatteryPercentage no está configurado en localSettings.");
                     }
+
 
                     /////Tiempo para cargar
 
